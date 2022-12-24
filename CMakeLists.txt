@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.7)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(turbo-spoon)
 
-set(SRC_LIST src/main.cpp)
+file(GLOB_RECURSE SRC_LIST src/*)
 add_executable(main ${SRC_LIST})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" FILES ${SRC_LIST})
 
 set(_LIB_GLEW_PATH "libs/glew-2.2.0")
 set(_LIB_GLFW_PATH "libs/glfw")
@@ -34,5 +35,8 @@ set_target_properties(main ${_LIB_GLFW_PROJ} ${_LIB_GLEW_PROJ} ${_LIB_ASSIMP_PRO
 include_directories("${_LIB_GLEW_PATH}/include")
 include_directories("${_LIB_GLFW_PATH}/include")
 include_directories("${_LIB_ASSIMP_PATH}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+target_compile_features(main PRIVATE cxx_std_17)
 
 target_link_libraries(main glew_s glfw glm assimp)

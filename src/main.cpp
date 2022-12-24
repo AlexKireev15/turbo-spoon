@@ -1,35 +1,42 @@
-// GLEW нужно подключать до GLFW.
-// GLEW
-#define GLEW_STATIC
-#include <GL/glew.h>
-// GLFW
-#include <GLFW/glfw3.h>
 #include <iostream>
-#include <glm/glm.hpp>
 
-int main()
-{
-	//Инициализация GLFW
-	glfwInit();
-	//Настройка GLFW
-	//Задается минимальная требуемая версия OpenGL. 
-	//Мажорная 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	//Минорная
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//Установка профайла для которого создается контекст
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//Выключение возможности изменения размера окна
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+#include "window/GLFWWindowHandler.h"
+#include "graphics/GLEWGraphicsHandler.h"
+#include "input/GLFWKeyHandler.h"
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
+// В целях отладки будем выводить сообщения glfw об ошибках
+void glfwErrorCallback(int code, const char* description) {
+    std::cout << "[GLFW] " << code << ": " << description << std::endl;
+    fflush(stdout);
+}
 
-	return 0;
+void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
+    GLenum severity, GLsizei length,
+    const GLchar* message,
+    const void* userParam) {
+    printf("[GL][source=0x%X; type=0x%X; id=0x%X; severity=0x%X] %s\n", source,
+        type, id, severity, message);
+}
+
+int main() {
+    WindowHandler->init();
+
+    auto pWindow = WindowHandler->createWindow();
+    WindowHandler->makeContextCurrent(pWindow);
+    GraphicsHandler->init();
+
+    glfwSetErrorCallback(glfwErrorCallback);
+
+    KeyHandler->setKeyCallback(pWindow);
+    
+    while (!WindowHandler->isWindowShouldClose(pWindow)) {
+        WindowHandler->pollEvents();
+        GraphicsHandler->clear();
+        WindowHandler->swapBuffers(pWindow);
+    }
+
+    GLFWKeyHandler::resetInstance();
+    GLEWGraphicsHandler::resetInstance();
+    GLFWWindowHandler::resetInstance();
+    return 0;
 }
