@@ -18,7 +18,7 @@ void GLFWWindowHandler::destroy()
 
 WindowPtr GLFWWindowHandler::createWindow()
 {
-	windows.push_back(WindowPtr(glfwCreateWindow(640, 360, "Test", nullptr, nullptr)));
+	windows.push_back(WindowPtr(glfwCreateWindow(800, 600, "Test", nullptr, nullptr)));
 	return windows.back();
 }
 

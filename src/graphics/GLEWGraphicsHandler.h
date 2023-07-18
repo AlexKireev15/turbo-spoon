@@ -9,6 +9,7 @@ class GLEWGraphicsHandler : public IGraphicsHandler, public Singleton<GLEWGraphi
 private:
 	GLEWGraphicsHandler() { }
 	~GLEWGraphicsHandler() { }
+
 public:
 	virtual unsigned int init() override 
 	{
@@ -16,7 +17,7 @@ public:
 		if (initRes != GLEW_OK)
 			return initRes;
 		glEnable(GL_DEBUG_OUTPUT);
-		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+		glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
 		return initRes;
 	}
 	virtual void clear() override { glClear(GL_COLOR_BUFFER_BIT); }

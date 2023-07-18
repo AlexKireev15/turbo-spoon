@@ -40,6 +40,8 @@ public:
 	virtual void setKeyCallback(WindowPtr, void*) const override;
 
 	virtual void pollEvents() override;
+
+	WindowPtr getWindow() { return windows.back(); };
 };
 
 #define WindowHandler GLFWWindowHandler::getInstance()
