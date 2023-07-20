@@ -8,7 +8,7 @@
 
 #include "window/GLFWWindowHandler.h"
 #include "graphics/GLEWGraphicsHandler.h"
-#include "debug/DebugHandler.h"
+//#include "debug/DebugHandler.h"
 #include "input/GLFWKeyHandler.h"
 #include "imgui/imgui_internal.h"
 
@@ -32,7 +32,7 @@ int main() {
 	auto pWindow = WindowHandler->createWindow();
 	WindowHandler->makeContextCurrent(pWindow);
 	GraphicsHandler->init();
-	DebugHandler::getInstance()->init();
+//	DebugHandler::getInstance()->init();
 
 	glfwSetErrorCallback(glfwErrorCallback);
 
@@ -43,14 +43,14 @@ int main() {
 	while (!WindowHandler->isWindowShouldClose(pWindow)) {
 		WindowHandler->pollEvents();
 
-		DebugHandler::getInstance()->update();
+//		DebugHandler::getInstance()->update();
 
 		GraphicsHandler->clear();
-		DebugHandler::getInstance()->clear();
+//		DebugHandler::getInstance()->clear();
 		WindowHandler->swapBuffers(pWindow);
 	}
 
-	DebugHandler::getInstance()->shutdown();
+//	DebugHandler::getInstance()->shutdown();
 
 	GLFWKeyHandler::resetInstance();
 	GLEWGraphicsHandler::resetInstance();
