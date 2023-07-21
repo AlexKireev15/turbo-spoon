@@ -12,6 +12,9 @@
 #include "input/GLFWKeyHandler.h"
 #include "imgui/imgui_internal.h"
 
+#include <glm/glm.hpp>
+#include <SOIL/SOIL.h>
+
 // В целях отладки будем выводить сообщения glfw об ошибках
 void glfwErrorCallback(int code, const char* description) {
 	std::cout << "[GLFW] " << code << ": " << description << std::endl;
@@ -27,7 +30,9 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
 }
 
 int main() {
-	WindowHandler->init();
+	int width, height;
+	unsigned char* image = SOIL_load_image("container.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	/*WindowHandler->init();
 
 	auto pWindow = WindowHandler->createWindow();
 	WindowHandler->makeContextCurrent(pWindow);
@@ -37,8 +42,6 @@ int main() {
 	glfwSetErrorCallback(glfwErrorCallback);
 
 	KeyHandler->setKeyCallback(pWindow);
-
-	//DebugHandler::getInstance()->addWindow([&e]() {e.fun(); });
 
 	while (!WindowHandler->isWindowShouldClose(pWindow)) {
 		WindowHandler->pollEvents();
@@ -54,6 +57,6 @@ int main() {
 
 	GLFWKeyHandler::resetInstance();
 	GLEWGraphicsHandler::resetInstance();
-	GLFWWindowHandler::resetInstance();
+	GLFWWindowHandler::resetInstance();*/
 	return 0;
 }
