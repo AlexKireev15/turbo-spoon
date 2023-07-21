@@ -38,8 +38,6 @@ int main() {
 
 	KeyHandler->setKeyCallback(pWindow);
 
-	//DebugHandler::getInstance()->addWindow([&e]() {e.fun(); });
-
 	while (!WindowHandler->isWindowShouldClose(pWindow)) {
 		WindowHandler->pollEvents();
 
