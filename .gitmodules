@@ -7,3 +7,6 @@
 [submodule "libs/assimp"]
 	path = libs/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "libs/soil"]
+	path = libs/soil
+	url = https://github.com/paralin/soil.git
