@@ -15,6 +15,8 @@
 #include <glm/glm.hpp>
 #include <SOIL/SOIL.h>
 
+#include "graphics/primitives/Window.h"
+
 // В целях отладки будем выводить сообщения glfw об ошибках
 void glfwErrorCallback(int code, const char* description) {
 	std::cout << "[GLFW] " << code << ": " << description << std::endl;
@@ -30,33 +32,15 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
 }
 
 int main() {
-	int width, height;
-	unsigned char* image = SOIL_load_image("container.jpg", &width, &height, 0, SOIL_LOAD_RGB);
-	/*WindowHandler->init();
-
-	auto pWindow = WindowHandler->createWindow();
-	WindowHandler->makeContextCurrent(pWindow);
-	GraphicsHandler->init();
-//	DebugHandler::getInstance()->init();
-
-	glfwSetErrorCallback(glfwErrorCallback);
-
-	KeyHandler->setKeyCallback(pWindow);
-
-	while (!WindowHandler->isWindowShouldClose(pWindow)) {
-		WindowHandler->pollEvents();
-
-//		DebugHandler::getInstance()->update();
-
-		GraphicsHandler->clear();
-//		DebugHandler::getInstance()->clear();
-		WindowHandler->swapBuffers(pWindow);
+	GLFWwindow* win = createWin(800, 600);
+	while (!glfwWindowShouldClose(win))
+	{
+		glfwPollEvents();
+		glClearColor(1.0f, 0.2f, 0.5, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glfwSwapBuffers(win);
 	}
-
-//	DebugHandler::getInstance()->shutdown();
-
-	GLFWKeyHandler::resetInstance();
-	GLEWGraphicsHandler::resetInstance();
-	GLFWWindowHandler::resetInstance();*/
+	std::cout << "end";
 	return 0;
+	
 }
