@@ -18,6 +18,7 @@ void GLFWWindowHandler::destroy()
 
 WindowPtr GLFWWindowHandler::createWindow()
 {
+	//glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
 	windows.push_back(WindowPtr(glfwCreateWindow(800, 600, "Test", nullptr, nullptr)));
 	return windows.back();
 }
@@ -25,6 +26,15 @@ WindowPtr GLFWWindowHandler::createWindow()
 void GLFWWindowHandler::makeContextCurrent(WindowPtr pWindow)
 {
 	glfwMakeContextCurrent(pWindow.get());
+	glfwSwapInterval(0);
+	int width, height;
+	glfwGetFramebufferSize(pWindow.get(), &width, &height);
+	glViewport(0, 0, width, height);
+}
+
+void GLFWWindowHandler::onResize(WindowPtr pWindow)
+{
+
 }
 
 void GLFWWindowHandler::destroyWindow(WindowPtr pWindow)
@@ -53,6 +63,7 @@ void GLFWWindowHandler::pollEvents()
 
 void GLFWWindowHandler::swapBuffers(WindowPtr pWindow)
 {
+	//glFlush();
 	glfwSwapBuffers(pWindow.get());
 }
 

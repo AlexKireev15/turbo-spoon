@@ -1,21 +1,17 @@
 #pragma once
-#include "window/GLFWWindowHandler.h"
-#include "graphics/IGraphicsHandler.h"
+
 #include "common/Singleton.h"
-#include "common/GLFWCommon.h"
+#include "common/imguiCommon.h"
 
-class DebugHandler : public IGraphicsHandler, public Singleton<DebugHandler>
+class DebugHandler
 {
-	friend class Singleton<DebugHandler>;
-
-private:
-	DebugHandler() { }
-	~DebugHandler() { }
-
 	std::vector<std::function<void(void)>> debugWindows;
 
 public:
-	virtual unsigned int init() override
+	DebugHandler() { }
+	~DebugHandler() { }
+
+	unsigned int init()
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -29,7 +25,7 @@ public:
 		ImGui_ImplOpenGL3_Init(glsl_version);
 		return 0;
 	}
-	virtual void clear() override { ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); }
+	void clear() {  }
 
 	void update()
 	{
@@ -41,6 +37,7 @@ public:
 			w();
 		}
 		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void addWindow(const std::function<void(void)>& f)
@@ -55,3 +52,6 @@ public:
 		ImGui::DestroyContext();
 	}
 };
+
+#define Debug (Singleton<DebugHandler>::getInstance())
+#define ShutdownDebug() (Singleton<DebugHandler>::resetInstance())

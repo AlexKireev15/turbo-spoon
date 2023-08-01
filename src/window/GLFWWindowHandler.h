@@ -1,11 +1,29 @@
 #pragma once
 #include <exception>
 #include <list>
+#include <memory>
+#include <functional>
 
 #include "common/GLFWCommon.h"
 #include "common/Singleton.h"
 
-#include "IWindowsHandler.h"
+
+template <class Window>
+class WindowPointer
+{
+protected:
+	Window* pWindow;
+
+public:
+	WindowPointer(Window* pWindow) : 
+		pWindow(pWindow)
+	{}
+	Window* get() { return pWindow; }
+	Window* get() const { return pWindow; }
+	virtual ~WindowPointer() { pWindow = 0; }
+};
+
+typedef WindowPointer<GLFWwindow> WindowPtr;
 
 class GLFWWindowPointer : public WindowPtr
 {
@@ -17,7 +35,7 @@ public:
 
 };
 
-class GLFWWindowHandler : public IWindowsHandler<GLFWwindow>, public Singleton<GLFWWindowHandler>
+class GLFWWindowHandler
 {
 	friend class Singleton<GLFWWindowHandler>;
 private:
@@ -28,20 +46,22 @@ protected:
 	~GLFWWindowHandler() noexcept;
 
 public:
-	virtual bool init() override;
-	virtual void destroy() override;
+	bool init();
+	void destroy();
 
-	virtual WindowPtr createWindow() override;
-	virtual void makeContextCurrent(WindowPtr) override;
-	virtual void destroyWindow(WindowPtr pWindow) override;
-	virtual bool isWindowShouldClose(WindowPtr pWindow) override;
-	virtual void swapBuffers(WindowPtr pWindow) override;
+	WindowPtr createWindow();
+	void makeContextCurrent(WindowPtr);
+	void onResize(WindowPtr pWindow);
+	void destroyWindow(WindowPtr pWindow);
+	bool isWindowShouldClose(WindowPtr pWindow);
+	void swapBuffers(WindowPtr pWindow);
 
-	virtual void setKeyCallback(WindowPtr, void*) const override;
+	void setKeyCallback(WindowPtr, void*) const;
 
-	virtual void pollEvents() override;
+	void pollEvents();
 
 	WindowPtr getWindow() { return windows.back(); };
 };
 
-#define WindowHandler GLFWWindowHandler::getInstance()
+#define WindowHandler (Singleton<GLFWWindowHandler>::getInstance())
+#define ShutdownWindowHandler() (Singleton<GLFWWindowHandler>::resetInstance())

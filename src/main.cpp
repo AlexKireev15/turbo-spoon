@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <sstream>
 #include <list>
@@ -6,18 +6,21 @@
 #include <iomanip>
 #include <map>
 
+#include <ctime>
+#include <filesystem>
+
 #include "window/GLFWWindowHandler.h"
 #include "graphics/GLEWGraphicsHandler.h"
-//#include "debug/DebugHandler.h"
+#include "debug/DebugHandler.h"
 #include "input/GLFWKeyHandler.h"
+#include "graphics/Shader.h"
 #include "imgui/imgui_internal.h"
+#include "graphics/Sprite.h"
+#include "graphics/Texture.h"
 
 #include <glm/glm.hpp>
 #include <SOIL/SOIL.h>
 
-#include "graphics/primitives/Window.h"
-
-// В целях отладки будем выводить сообщения glfw об ошибках
 void glfwErrorCallback(int code, const char* description) {
 	std::cout << "[GLFW] " << code << ": " << description << std::endl;
 	fflush(stdout);
@@ -32,15 +35,71 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
 }
 
 int main() {
-	GLFWwindow* win = createWin(800, 600);
-	while (!glfwWindowShouldClose(win))
+	WindowHandler->init();
+
+	auto pWindow = WindowHandler->createWindow();
+	WindowHandler->makeContextCurrent(pWindow);
+	GraphicsHandler->init();
+	Debug->init();
+
+	time_t beginFrame = clock();
+	time_t endFrame = clock();
+	int fps = 0;
+	int frames = 0;
+	Debug->addWindow([&beginFrame, &endFrame, &fps]() 
+		{
+			ImGui::Begin("FPS");
+			ImGui::Text(std::to_string(fps).c_str());
+			ImGui::End();
+		});
+	glfwSetErrorCallback(glfwErrorCallback);
+
+	KeyHandler->setKeyCallback(pWindow);
+
+	auto resPath = std::filesystem::current_path().parent_path().string() + "\\resources\\";
+	Shader shader(resPath + "shaders\\rect.vs", resPath + "shaders\\rect.frags");
+	shader.compile();
+
+	Texture texture(resPath + "textures\\me.png");
+	texture.load();
+
+	std::vector<Sprite> sprites;
+
+	for (size_t idx = 0; idx < 6; idx++)
 	{
-		glfwPollEvents();
-		glClearColor(1.0f, 0.2f, 0.5, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glfwSwapBuffers(win);
+		GraphicsHandler->addSprite(Sprite({ 0.f, 0.f, 0.f, 0.f }, { 1.f, 1.f, 0.f }, texture, shader));
 	}
-	std::cout << "end";
+
+	srand(clock());
+	while (!WindowHandler->isWindowShouldClose(pWindow)) {
+		WindowHandler->pollEvents();
+
+		GraphicsHandler->draw();		
+		Debug->update();
+		
+		WindowHandler->swapBuffers(pWindow);
+		frames++;
+		endFrame = clock();
+
+		float idx = 1;
+		for (auto& sprite : GraphicsHandler->getSprites())
+		{
+			sprite.setTransform(glm::rotate(sprite.getTransform(), glm::radians(.005f * idx), glm::vec3(0.0f, 0.0f, 1.0f)));
+			++idx;
+		}
+		if (endFrame - beginFrame >= 1000)
+		{
+			fps = frames;
+			frames = 0;
+			beginFrame = endFrame;
+		}
+	}
+
+	Debug->shutdown();
+
+	ShutdownDebug();
+	ShutdownKeyHandler();
+	ShutdownGraphicsHandler();
+	ShutdownWindowHandler();
 	return 0;
-	
 }
