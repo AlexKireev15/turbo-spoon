@@ -10,3 +10,6 @@
 [submodule "libs/soil"]
 	path = libs/soil
 	url = https://github.com/paralin/soil.git
+[submodule "libs/freetype"]
+	path = libs/freetype
+	url = https://gitlab.freedesktop.org/freetype/freetype.git

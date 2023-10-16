@@ -19,7 +19,9 @@ void GLFWWindowHandler::destroy()
 WindowPtr GLFWWindowHandler::createWindow()
 {
 	//glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
-	windows.push_back(WindowPtr(glfwCreateWindow(800, 600, "Test", nullptr, nullptr)));
+	int width, height;
+	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), NULL, NULL, &width, &height);
+	windows.push_back(WindowPtr(glfwCreateWindow(width, height, "Test", glfwGetPrimaryMonitor(), nullptr)));
 	return windows.back();
 }
 

@@ -127,4 +127,12 @@ public:
 		GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 	}
+
+	GLuint getProgram()
+	{
+		return shaderProgram;
+	}
 };
+
+typedef std::shared_ptr<Shader> ShaderPtr;
+#define ShaderPtr(...) (std::make_shared<Shader>(__VA_ARGS__))

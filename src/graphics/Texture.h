@@ -42,3 +42,6 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture);
 	}
 };
+
+typedef std::shared_ptr<Texture> TexturePtr;
+#define TexturePtr(...) (std::make_shared<Texture>(__VA_ARGS__))

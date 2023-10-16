@@ -15,11 +15,11 @@ private:
 	glm::mat4 trans;
 
 	GLuint VBO, VAO, EBO;
-	const Texture& texture;
-	const Shader& shader;
+	const ShaderPtr& shader;
+	const TexturePtr& texture;
 
 public:
-	Sprite(const glm::vec4& pos, const glm::vec3& size, const Texture& texture, const Shader& shader)
+	Sprite(const ShaderPtr& shader, const TexturePtr& texture, const glm::vec4& pos = { 0.f, 0.f, 0.f, 0.f }, const glm::vec3& size = { 1.f, 1.f, 0.f })
 		: position(pos), size(size), trans(glm::mat4(1.f)), texture(texture), shader(shader)
 	{
 		GLfloat vertices[] = {
@@ -58,9 +58,9 @@ public:
 	}
 	void draw() const
 	{
-		shader.use();
-		shader.trasform(trans);
-		texture.use();
+		shader->use();
+		shader->trasform(trans);
+		texture->use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);

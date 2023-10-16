@@ -1,25 +1,25 @@
-﻿#include <iostream>
-#include <string>
-#include <sstream>
-#include <list>
-#include <algorithm>
-#include <iomanip>
-#include <map>
-
-#include <ctime>
-#include <filesystem>
-
-#include "window/GLFWWindowHandler.h"
+﻿#include "window/GLFWWindowHandler.h"
 #include "graphics/GLEWGraphicsHandler.h"
+#include "graphics/ResourceManager.h"
 #include "debug/DebugHandler.h"
 #include "input/GLFWKeyHandler.h"
-#include "graphics/Shader.h"
 #include "imgui/imgui_internal.h"
-#include "graphics/Sprite.h"
-#include "graphics/Texture.h"
 
-#include <glm/glm.hpp>
-#include <SOIL/SOIL.h>
+#include "common/GLFWCommon.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "graphics/ResourceManager.h"
+
+#include <map>
+
+#include <iostream>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
+#define isDebug
 
 void glfwErrorCallback(int code, const char* description) {
 	std::cout << "[GLFW] " << code << ": " << description << std::endl;
@@ -40,62 +40,35 @@ int main() {
 	auto pWindow = WindowHandler->createWindow();
 	WindowHandler->makeContextCurrent(pWindow);
 	GraphicsHandler->init();
+#ifdef isDebug
 	Debug->init();
-
-	time_t beginFrame = clock();
-	time_t endFrame = clock();
-	int fps = 0;
-	int frames = 0;
-	Debug->addWindow([&beginFrame, &endFrame, &fps]() 
-		{
-			ImGui::Begin("FPS");
-			ImGui::Text(std::to_string(fps).c_str());
-			ImGui::End();
-		});
+#endif
 	glfwSetErrorCallback(glfwErrorCallback);
+
+    int width, height;
+    glfwGetWindowSize(pWindow.get(), &width, &height);
 
 	KeyHandler->setKeyCallback(pWindow);
 
-	auto resPath = std::filesystem::current_path().parent_path().string() + "\\resources\\";
-	Shader shader(resPath + "shaders\\rect.vs", resPath + "shaders\\rect.frags");
-	shader.compile();
+	Resources->loadShader("rect.vs", "rect.frags", "rect");
+	Resources->loadTexture("Me.png", "Me");
+    Resources->loadFont("arial.ttf", "arial");
 
-	Texture texture(resPath + "textures\\me.png");
-	texture.load();
+	GraphicsHandler->generateSprite(Resources->getShader("rect"), Resources->getTexture("Me"));
 
-	std::vector<Sprite> sprites;
-
-	for (size_t idx = 0; idx < 6; idx++)
-	{
-		GraphicsHandler->addSprite(Sprite({ 0.f, 0.f, 0.f, 0.f }, { 1.f, 1.f, 0.f }, texture, shader));
-	}
-
-	srand(clock());
 	while (!WindowHandler->isWindowShouldClose(pWindow)) {
 		WindowHandler->pollEvents();
 
-		GraphicsHandler->draw();		
+		GraphicsHandler->draw();
+        Resources->getFont("arial")->renderText(L"Это тестовый текст Text", -width/3.f, -350, .5f, glm::vec3(1, 1 ,1));
+#ifdef isDebug
 		Debug->update();
-		
+#endif
 		WindowHandler->swapBuffers(pWindow);
-		frames++;
-		endFrame = clock();
-
-		float idx = 1;
-		for (auto& sprite : GraphicsHandler->getSprites())
-		{
-			sprite.setTransform(glm::rotate(sprite.getTransform(), glm::radians(.005f * idx), glm::vec3(0.0f, 0.0f, 1.0f)));
-			++idx;
-		}
-		if (endFrame - beginFrame >= 1000)
-		{
-			fps = frames;
-			frames = 0;
-			beginFrame = endFrame;
-		}
 	}
-
+#ifdef isDebug
 	Debug->shutdown();
+#endif
 
 	ShutdownDebug();
 	ShutdownKeyHandler();

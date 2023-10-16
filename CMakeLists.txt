@@ -12,6 +12,7 @@ set(_LIB_GLFW_PATH "libs/glfw")
 set(_LIB_GLM_PATH "libs/glm")
 set(_LIB_ASSIMP_PATH "libs/assimp")
 set(_LIB_SOIL_PATH "libs/soil")
+set(_LIB_FREETYPE_PATH "libs/freetype")
 
 set(BUILD_SHARED_LIBS OFF)
 
@@ -20,17 +21,20 @@ add_subdirectory("${_LIB_GLFW_PATH}")
 add_subdirectory("${_LIB_GLM_PATH}")
 add_subdirectory("${_LIB_ASSIMP_PATH}")
 add_subdirectory("${_LIB_SOIL_PATH}")
+add_subdirectory("${_LIB_FREETYPE_PATH}")
 
 set(_LIB_GLFW_PROJ glfw update_mappings)
 set(_LIB_GLEW_PROJ glew glewinfo uninstall visualinfo glew_s)
 set(_LIB_ASSIMP_PROJ assimp unit UpdateAssimpLibsDebugSymbolsAndDLLs zlibstatic)
 set(_LIB_SOIL_PROJ soil)
+set(_LIB_FREETYPE_PROJ freetype)
 
 set_target_properties(${_LIB_GLFW_PROJ} PROPERTIES FOLDER "libs/GLFW3")
 set_target_properties(${_LIB_GLEW_PROJ} PROPERTIES FOLDER "libs/glew")
 set_target_properties(${_LIB_ASSIMP_PROJ} PROPERTIES FOLDER "libs/assimp")
 set_target_properties(${_LIB_SOIL_PROJ} PROPERTIES FOLDER "libs/soil")
-set_target_properties(main ${_LIB_GLFW_PROJ} ${_LIB_GLEW_PROJ} ${_LIB_ASSIMP_PROJ} ${_LIB_SOIL_PROJ} PROPERTIES
+set_target_properties(${_LIB_FREETYPE_PROJ} PROPERTIES FOLDER "libs/freetype")
+set_target_properties(main ${_LIB_GLFW_PROJ} ${_LIB_GLEW_PROJ} ${_LIB_ASSIMP_PROJ} ${_LIB_SOIL_PROJ} ${_LIB_FREETYPE_PROJ} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
@@ -41,8 +45,9 @@ include_directories("${_LIB_GLFW_PATH}/include")
 include_directories("${_LIB_ASSIMP_PATH}/include")
 include_directories("${_LIB_GLM_PATH}")
 include_directories("${_LIB_SOIL_PATH}/inc")
+include_directories("${_LIB_FREETYPE_PATH}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 target_compile_features(main PRIVATE cxx_std_17)
 
-target_link_libraries(main glew_s glfw glm assimp soil)
+target_link_libraries(main glew_s glfw glm assimp soil freetype)

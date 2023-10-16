@@ -36,9 +36,10 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void addSprite(const Sprite& sprite)
+	void generateSprite(ShaderPtr shader, TexturePtr texture)
 	{
-		sprites.push_back(sprite);
+		Sprite s(shader, texture);
+		sprites.push_back(s);
 	}
 
 	void draw()
